@@ -2,43 +2,28 @@ ci: lint
 .PHONY: ci
 
 #################################################
-# Bootstrapping for base golang package deps
+# Bootstrapping for golangci-lint
 #################################################
-BOOTSTRAP=\
-	github.com/alecthomas/gometalinter
-
-$(BOOTSTRAP):
-	go get -u $@
-
-bootstrap: $(BOOTSTRAP)
-	gometalinter --install
+bootstrap:
+	if [ -z "$$(which golangci-lint 2>/dev/null)" ]; then \
+ 	  curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s -- -b $$(go env GOPATH)/bin; \
+	fi
 
 vendor:
 
 update-vendor:
 
-.PHONY: $(BOOTSTRAP)
-
 #################################################
 # Testing and linting
 #################################################
-LINTERS=\
-	gofmt \
-	golint \
-	staticcheck \
-	vet \
-	misspell \
-	ineffassign \
-	deadcode
-METALINT=gometalinter --tests --disable-all --vendor --deadline=5m -e "zz_.*\.go" \
-	 ./... --enable
 
 test: vendor
 	CGO_ENABLED=0 go test -v ./...
 
-lint: $(LINTERS)
+lint: vendor
+	golangci-lint run -D errcheck
 
 $(LINTERS): vendor
 	$(METALINT) $@
 
-.PHONY: $(LINTERS) test lint
+.PHONY: bootstrap test lint
