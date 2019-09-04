@@ -24,7 +24,6 @@ type (
 		PaymentMethod    string          `json:"payment_method"`
 		Name             string          `json:"project_name"`
 		TechnicalEmails  []*ContactEmail `json:"tech_emails"`
-		VatID            string          `json:"vat_id"`
 	}
 
 	// ProjectsHandler is the client which interacts with the Projects endpoints
@@ -44,6 +43,7 @@ type (
 		CountryCode      *string          `json:"country_code,omitempty"`
 		Project          string           `json:"project"`
 		TechnicalEmails  *[]*ContactEmail `json:"tech_emails,omitempty"`
+		VatID            string          `json:"vat_id"`
 	}
 
 	// UpdateProjectRequest are the parameters for updating a project.
